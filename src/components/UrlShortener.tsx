@@ -17,10 +17,13 @@ const UrlShortener: React.FC = () => {
     setLoading(true);
     setError(null); // Reset previous error state
     try {
-      const response = await axios.post('/api/shorten', {
-        longUrl: values.longUrl,
-        customUrl: values.customUrl,
-      });
+      const response = await axios.post(
+        'https://nse-scissor.onrender.com/api/shorten',
+        {
+          longUrl: values.longUrl,
+          customUrl: values.customUrl,
+        },
+      );
       setShortUrl(response.data.shortUrl);
     } catch (error) {
       setError('Failed to shorten URL. Please try again.');
