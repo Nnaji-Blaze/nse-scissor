@@ -1,8 +1,8 @@
-// firebaseConfig.ts
 import { initializeApp } from 'firebase/app';
-import { getAnalytics, logEvent } from 'firebase/analytics';
+import { getAnalytics } from 'firebase/analytics';
+import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
-// Your Firebase configuration
 const firebaseConfig = {
   apiKey: 'AIzaSyA8ZGqVm93pD_dKYr_VDrh1X6Rhcq3ijPo',
   authDomain: 'nse-scx.firebaseapp.com',
@@ -13,8 +13,9 @@ const firebaseConfig = {
   measurementId: 'G-S2CWNDHKL2',
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-export { app, analytics, logEvent };
+export { app, analytics, auth, db };
