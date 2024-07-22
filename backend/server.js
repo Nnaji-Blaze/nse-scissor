@@ -1,30 +1,28 @@
 const express = require('express');
-const cors = require('cors');
-const shortid = require('shortid');
 const bodyParser = require('body-parser');
+const shortid = require('shortid');
+const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors());
 app.use(bodyParser.json());
+app.use(cors());
 
-const urlDatabase = {};
+let urlDatabase = {};
 
-// Endpoint to shorten URL
 app.post('/api/shorten', (req, res) => {
   const { longUrl, customUrl } = req.body;
-  const shortUrl = customUrl || shortid.generate();
-  urlDatabase[shortUrl] = longUrl;
-  res.json({ shortUrl: `${req.protocol}://${req.get('host')}/${shortUrl}` });
+  const shortId = customUrl || shortid.generate();
+  const shortUrl = `${req.protocol}://${req.get('host')}/${shortId}`;
+
+  urlDatabase[shortId] = longUrl;
+
+  res.json({ shortUrl });
 });
 
-// Endpoint to handle redirection
-app.get('/:shortUrl', (req, res) => {
-  const shortUrl = req.params.shortUrl;
-  const longUrl = urlDatabase[shortUrl];
-
+app.get('/:shortId', (req, res) => {
+  const longUrl = urlDatabase[req.params.shortId];
   if (longUrl) {
     res.redirect(longUrl);
   } else {
@@ -32,6 +30,10 @@ app.get('/:shortUrl', (req, res) => {
   }
 });
 
+app.get('/', (req, res) => {
+  res.send('URL Shortener API');
+});
+
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+  console.log(`Server is running on port ${port}`);
 });

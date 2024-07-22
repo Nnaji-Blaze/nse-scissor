@@ -15,7 +15,7 @@ const UrlShortener: React.FC = () => {
     customUrl: string;
   }) => {
     setLoading(true);
-    setError(null); // Reset previous error state
+    setError(null);
     try {
       const response = await axios.post(
         'https://nse-scissor.onrender.com/api/shorten',
