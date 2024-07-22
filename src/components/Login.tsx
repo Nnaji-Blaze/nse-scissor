@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Container, TextField, Button, Typography, Box } from '@mui/material';
+import { auth } from '../firebaseConfig';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const handleLogin = async () => {
-    const auth = getAuth();
     try {
       await signInWithEmailAndPassword(auth, email, password);
       alert('Login successful!');
-    } catch (error) {
-      setError(error.message);
+    } catch (error: unknown) {
+      setError((error as { message: string }).message);
     }
   };
 

@@ -1,19 +1,19 @@
 import React, { useState } from 'react';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { Container, TextField, Button, Typography, Box } from '@mui/material';
+import { auth } from '../firebaseConfig';
 
 const Signup: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const handleSignup = async () => {
-    const auth = getAuth();
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       alert('Signup successful!');
-    } catch (error) {
-      setError(error.message);
+    } catch (error: unknown) {
+      setError((error as { message: string }).message);
     }
   };
 
@@ -37,7 +37,12 @@ const Signup: React.FC = () => {
           fullWidth
           margin="normal"
         />
-        <Button variant="contained" color="primary" onClick={handleSignup} fullWidth>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSignup}
+          fullWidth
+        >
           Signup
         </Button>
         {error && <Typography color="error">{error}</Typography>}

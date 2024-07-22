@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import QRCode from 'qrcode.react';
-import { analytics, logEvent, auth, db } from '../firebaseConfig';
+import { auth, db, analytics, firebaseLogEvent } from '../firebaseConfig';
 import { Formik, Field, Form, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
+import {
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  DocumentData,
+} from 'firebase/firestore';
+import { onAuthStateChanged, User } from 'firebase/auth';
 import {
   Container,
   TextField,
@@ -17,13 +24,14 @@ import {
   ListItem,
   ListItemText,
 } from '@mui/material';
+import './UrlShortener.css'; // Import the CSS file
 
 const UrlShortener: React.FC = () => {
   const [shortUrl, setShortUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [user, setUser] = useState<any>(null);
-  const [urls, setUrls] = useState<any[]>([]);
+  const [user, setUser] = useState<User | null>(null);
+  const [urls, setUrls] = useState<DocumentData[]>([]);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -76,7 +84,7 @@ const UrlShortener: React.FC = () => {
 
   const trackClick = () => {
     if (shortUrl) {
-      logEvent(analytics, 'url_click', { shortUrl });
+      firebaseLogEvent(analytics, 'url_click', { shortUrl });
     }
   };
 
@@ -91,39 +99,34 @@ const UrlShortener: React.FC = () => {
           })}
           onSubmit={handleShortenUrl}
         >
-          {({
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            values,
-            errors,
-            touched,
-          }) => (
-            <form onSubmit={handleSubmit}>
+          {({ handleSubmit }) => (
+            <Form onSubmit={handleSubmit}>
               <Box mb={2}>
-                <TextField
+                <Field
                   name="longUrl"
                   type="text"
+                  as={TextField}
                   label="Enter long URL"
-                  value={values.longUrl}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.longUrl && Boolean(errors.longUrl)}
-                  helperText={touched.longUrl && errors.longUrl}
                   fullWidth
+                  helperText={
+                    <div className="error-message">
+                      <ErrorMessage name="longUrl" component="div" />
+                    </div>
+                  }
                 />
               </Box>
               <Box mb={2}>
-                <TextField
+                <Field
                   name="customUrl"
                   type="text"
+                  as={TextField}
                   label="Enter custom URL"
-                  value={values.customUrl}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={touched.customUrl && Boolean(errors.customUrl)}
-                  helperText={touched.customUrl && errors.customUrl}
                   fullWidth
+                  helperText={
+                    <div className="error-message">
+                      <ErrorMessage name="customUrl" component="div" />
+                    </div>
+                  }
                 />
               </Box>
               <Button
@@ -135,7 +138,7 @@ const UrlShortener: React.FC = () => {
               >
                 {loading ? <CircularProgress size={24} /> : 'Shorten URL'}
               </Button>
-            </form>
+            </Form>
           )}
         </Formik>
         {error && (
@@ -158,8 +161,8 @@ const UrlShortener: React.FC = () => {
               {urls.map((url, index) => (
                 <ListItem key={index}>
                   <ListItemText
-                    primary={url.shortUrl}
-                    secondary={url.longUrl}
+                    primary={`Short URL: ${url.shortUrl}`}
+                    secondary={`Long URL: ${url.longUrl}`}
                   />
                 </ListItem>
               ))}

@@ -17,12 +17,7 @@ const App: React.FC = () => {
       <CssBaseline />
       <AppBar position="static">
         <Toolbar>
-          <Typography
-            variant="
-          h6"
-          >
-            Scissor
-          </Typography>
+          <Typography variant="h6">Scissor</Typography>
         </Toolbar>
       </AppBar>
       <Container>
