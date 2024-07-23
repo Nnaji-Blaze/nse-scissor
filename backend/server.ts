@@ -14,11 +14,12 @@ interface UrlDatabase {
 }
 
 const urlDatabase: UrlDatabase = {};
+const baseUrl = process.env.BASE_URL || 'http://localhost:5000'; // Default to localhost for local development
 
 app.post('/api/shorten', (req, res) => {
   const { longUrl, customUrl } = req.body;
   const shortId = customUrl || shortid.generate();
-  const shortUrl = `${req.protocol}://${req.get('host')}/${shortId}`;
+  const shortUrl = `${baseUrl}/${shortId}`;
 
   urlDatabase[shortId] = longUrl;
 
@@ -40,7 +41,7 @@ app.get('/', (req, res) => {
 
 app.get('/api/urls', (req, res) => {
   const urlsArray = Object.keys(urlDatabase).map((key) => ({
-    shortUrl: `${req.protocol}://${req.get('host')}/${key}`,
+    shortUrl: `${baseUrl}/${key}`,
     longUrl: urlDatabase[key],
   }));
   res.json({ urls: urlsArray });
