@@ -5,8 +5,8 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "outDir": "./dist",
-    "rootDir": "./",
+    "outDir": "./", // Output directly in the root directory
+    "rootDir": "./", // Root directory for TypeScript files
     "moduleResolution": "node"
   },
   "include": ["server.ts"]
