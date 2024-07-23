@@ -1,4 +1,10 @@
-/* UrlShortener.css */
-.error-message {
-  color: red;
+.urlshortener-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.table-container {
+  margin-top: 20px;
+  width: 100%;
 }

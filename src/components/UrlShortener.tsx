@@ -1,45 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import QRCode from 'qrcode.react';
-import { auth, db, analytics, firebaseLogEvent } from '../firebaseConfig';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import {
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  where,
-  DocumentData,
-} from 'firebase/firestore';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import {
-  Container,
+  Box,
   TextField,
   Button,
   Typography,
-  Box,
-  CircularProgress,
-  List,
-  ListItem,
-  ListItemText,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
 } from '@mui/material';
-import './UrlShortener.css'; // Import the CSS file
+import { analytics, firebaseLogEvent as logEvent, db } from '../firebaseConfig';
+import { collection, getDocs } from 'firebase/firestore';
+import './UrlShortener.css';
+
+interface UrlData {
+  id: string;
+  longUrl: string;
+  shortUrl: string;
+}
 
 const UrlShortener: React.FC = () => {
   const [shortUrl, setShortUrl] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [urls, setUrls] = useState<DocumentData[]>([]);
+  const [urlData, setUrlData] = useState<UrlData[]>([]);
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      if (user) {
-        fetchUserUrls(user.uid);
-      }
-    });
+    const fetchUrlData = async () => {
+      const querySnapshot = await getDocs(collection(db, 'urls'));
+      const data: UrlData[] = [];
+      querySnapshot.forEach((doc) => {
+        data.push({ id: doc.id, ...doc.data() } as UrlData);
+      });
+      setUrlData(data);
+    };
+    fetchUrlData();
   }, []);
 
   const handleShortenUrl = async (values: {
@@ -56,17 +58,8 @@ const UrlShortener: React.FC = () => {
           customUrl: values.customUrl,
         },
       );
-      const { shortUrl } = response.data;
-      setShortUrl(shortUrl);
-      if (user) {
-        await addDoc(collection(db, 'urls'), {
-          uid: user.uid,
-          longUrl: values.longUrl,
-          customUrl: values.customUrl,
-          shortUrl,
-        });
-        fetchUserUrls(user.uid);
-      }
+      setShortUrl(response.data.shortUrl);
+      logEvent(analytics, 'shorten_url', { shortUrl: response.data.shortUrl });
     } catch (error) {
       setError('Failed to shorten URL. Please try again.');
       console.error('Error shortening URL:', error);
@@ -75,102 +68,79 @@ const UrlShortener: React.FC = () => {
     }
   };
 
-  const fetchUserUrls = async (uid: string) => {
-    const q = query(collection(db, 'urls'), where('uid', '==', uid));
-    const querySnapshot = await getDocs(q);
-    const urls = querySnapshot.docs.map((doc) => doc.data());
-    setUrls(urls);
-  };
-
-  const trackClick = () => {
-    if (shortUrl) {
-      firebaseLogEvent(analytics, 'url_click', { shortUrl });
-    }
-  };
-
   return (
-    <Container>
-      <Box mt={4} display="flex" flexDirection="column" alignItems="center">
-        <Formik
-          initialValues={{ longUrl: '', customUrl: '' }}
-          validationSchema={Yup.object({
-            longUrl: Yup.string().url('Invalid URL').required('Required'),
-            customUrl: Yup.string().required('Required'),
-          })}
-          onSubmit={handleShortenUrl}
-        >
-          {({ handleSubmit }) => (
-            <Form onSubmit={handleSubmit}>
-              <Box mb={2}>
-                <Field
-                  name="longUrl"
-                  type="text"
-                  as={TextField}
-                  label="Enter long URL"
-                  fullWidth
-                  helperText={
-                    <div className="error-message">
-                      <ErrorMessage name="longUrl" component="div" />
-                    </div>
-                  }
-                />
-              </Box>
-              <Box mb={2}>
-                <Field
-                  name="customUrl"
-                  type="text"
-                  as={TextField}
-                  label="Enter custom URL"
-                  fullWidth
-                  helperText={
-                    <div className="error-message">
-                      <ErrorMessage name="customUrl" component="div" />
-                    </div>
-                  }
-                />
-              </Box>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                disabled={loading}
+    <Box className="urlshortener-container">
+      <Formik
+        initialValues={{ longUrl: '', customUrl: '' }}
+        validationSchema={Yup.object({
+          longUrl: Yup.string().url('Invalid URL').required('Required'),
+          customUrl: Yup.string().required('Required'),
+        })}
+        onSubmit={handleShortenUrl}
+      >
+        {({ errors, touched }) => (
+          <Form>
+            <Box mb={2}>
+              <Field
+                as={TextField}
+                name="longUrl"
+                type="text"
+                label="Enter long URL"
+                variant="outlined"
                 fullWidth
-              >
-                {loading ? <CircularProgress size={24} /> : 'Shorten URL'}
-              </Button>
-            </Form>
-          )}
-        </Formik>
-        {error && (
-          <Typography color="error" mt={2}>
-            {error}
-          </Typography>
+                error={touched.longUrl && Boolean(errors.longUrl)}
+                helperText={touched.longUrl && errors.longUrl}
+              />
+            </Box>
+            <Box mb={2}>
+              <Field
+                as={TextField}
+                name="customUrl"
+                type="text"
+                label="Enter custom URL"
+                variant="outlined"
+                fullWidth
+                error={touched.customUrl && Boolean(errors.customUrl)}
+                helperText={touched.customUrl && errors.customUrl}
+              />
+            </Box>
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              disabled={loading}
+            >
+              {loading ? 'Shortening...' : 'Shorten URL'}
+            </Button>
+          </Form>
         )}
-        {shortUrl && (
-          <Box mt={4} textAlign="center">
-            <Typography variant="h6" onClick={trackClick}>
-              Short URL: {shortUrl}
-            </Typography>
-            <QRCode value={shortUrl} />
-          </Box>
-        )}
-        {user && (
-          <Box mt={4}>
-            <Typography variant="h5">Your URLs</Typography>
-            <List>
-              {urls.map((url, index) => (
-                <ListItem key={index}>
-                  <ListItemText
-                    primary={`Short URL: ${url.shortUrl}`}
-                    secondary={`Long URL: ${url.longUrl}`}
-                  />
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        )}
-      </Box>
-    </Container>
+      </Formik>
+      {error && <Typography color="error">{error}</Typography>}
+      {shortUrl && (
+        <Box mt={2}>
+          <Typography>Short URL: {shortUrl}</Typography>
+          <QRCode value={shortUrl} />
+        </Box>
+      )}
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Long URL</TableCell>
+              <TableCell>Short URL</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {urlData.map((url) => (
+              <TableRow key={url.id}>
+                <TableCell>{url.longUrl}</TableCell>
+                <TableCell>{url.shortUrl}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 };
 

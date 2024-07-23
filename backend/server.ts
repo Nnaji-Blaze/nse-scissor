@@ -1,7 +1,7 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const shortid = require('shortid');
-const cors = require('cors');
+import express from 'express';
+import bodyParser from 'body-parser';
+import shortid from 'shortid';
+import cors from 'cors';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -9,7 +9,11 @@ const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(cors());
 
-let urlDatabase = {};
+interface UrlDatabase {
+  [key: string]: string;
+}
+
+const urlDatabase: UrlDatabase = {};
 
 app.post('/api/shorten', (req, res) => {
   const { longUrl, customUrl } = req.body;
@@ -32,6 +36,14 @@ app.get('/:shortId', (req, res) => {
 
 app.get('/', (req, res) => {
   res.send('URL Shortener API');
+});
+
+app.get('/api/urls', (req, res) => {
+  const urlsArray = Object.keys(urlDatabase).map((key) => ({
+    shortUrl: `${req.protocol}://${req.get('host')}/${key}`,
+    longUrl: urlDatabase[key],
+  }));
+  res.json({ urls: urlsArray });
 });
 
 app.listen(port, () => {

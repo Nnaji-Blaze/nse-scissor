@@ -1,0 +1,25 @@
+.main-page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 0 16px;
+}
+
+.urlshortener-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s ease;
+  width: 100%;
+}
+
+.form-active {
+  transform: translateX(33%);
+}
+
+footer {
+  margin-top: auto;
+  text-align: center;
+  padding: 10px;
+  background-color: #f1f1f1;
+}
