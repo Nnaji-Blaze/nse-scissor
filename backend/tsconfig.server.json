@@ -9,5 +9,6 @@
     "rootDir": "./", // Root directory for TypeScript files
     "moduleResolution": "node"
   },
-  "include": ["server.ts"]
+  "include": ["server.ts"], // Ensure this path is correct
+  "exclude": ["node_modules"] // Exclude node_modules but not the source files
 }
