@@ -1,5 +1,11 @@
+/* General styling for the app */
 .App {
   text-align: center;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .App-logo {
@@ -35,4 +41,151 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* General styling for the main page container */
+.main-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  padding: 16px;
+  position: relative;
+}
+
+/* Styling for the header */
+.header {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  align-items: center;
+  width: calc(100% - 32px);
+  justify-content: space-between;
+}
+
+/* Styling for the app name */
+.app-name {
+  cursor: pointer;
+  flex-grow: 1;
+  text-align: center;
+}
+
+/* Styling for the menu button */
+.menu-button {
+  margin-right: auto;
+}
+
+/* Styling for the refresh button */
+.refresh-button {
+  margin-left: auto;
+}
+
+/* General styling for the content container */
+.content-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+/* Styling for the URL shortener container */
+.urlshortener-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.urlshortener-container form {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.urlshortener-container .MuiTextField-root {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.urlshortener-container .MuiButton-root {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.urlshortener-container .short-url {
+  margin-top: 16px;
+  word-break: break-all;
+}
+
+.urlshortener-container .qr-code {
+  margin-top: 16px;
+}
+
+.urlshortener-container .qr-code canvas {
+  margin-bottom: 16px;
+}
+
+/* Table styling */
+.MuiPaper-root {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.MuiTable-root {
+  width: 100%;
+}
+
+.MuiTableCell-root {
+  word-break: break-all;
+}
+
+/* Styling for the form container */
+.form-container {
+  width: 30%;
+  padding: 16px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+/* Styling for the Drawer */
+.MuiDrawer-paper {
+  width: 200px;
+}
+
+/* Styling for the List items in the Drawer */
+.MuiList-root {
+  padding: 0;
+}
+
+.MuiListItem-root {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+  cursor: pointer;
+}
+
+.MuiListItemText-root {
+  text-align: center;
+}
+
+/* When the drawer is open, move the content to the right */
+.drawer-open .content-container {
+  transform: translateX(200px);
+}
+
+/* Adjust the width of the URL shortener container when the form is active */
+.active .urlshortener-container {
+  width: 66.66%;
+}
+
+/* Center the URL shortener container when the form is not active */
+.urlshortener-container {
+  transition: all 0.3s ease;
 }

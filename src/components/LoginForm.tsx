@@ -4,7 +4,7 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
 } from 'firebase/auth';
-import { auth } from '../firebaseConfig'; // Adjust import as needed
+import { auth } from '../firebaseConfig';
 
 interface LoginFormProps {
   onClose: () => void;
@@ -34,14 +34,26 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
   };
 
   return (
-    <Box>
-      <Typography variant="h6">Login</Typography>
+    <Box
+      sx={{
+        maxWidth: 400,
+        mx: 'auto',
+        p: 3,
+        bgcolor: 'background.paper',
+        borderRadius: 2,
+        boxShadow: 2,
+      }}
+    >
+      <Typography variant="h6" mb={2}>
+        Login
+      </Typography>
       <TextField
         label="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         fullWidth
         margin="normal"
+        variant="outlined"
       />
       <TextField
         label="Password"
@@ -50,14 +62,23 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
         onChange={(e) => setPassword(e.target.value)}
         fullWidth
         margin="normal"
+        variant="outlined"
       />
-      <Button variant="contained" color="primary" onClick={handleLogin}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleLogin}
+        fullWidth
+        sx={{ mt: 2 }}
+      >
         Login
       </Button>
       <Button
         variant="text"
-        color="primary"
+        color="secondary"
         onClick={() => setResetPassword(!resetPassword)}
+        fullWidth
+        sx={{ mt: 1 }}
       >
         Forgot Password?
       </Button>
@@ -66,11 +87,13 @@ const LoginForm: React.FC<LoginFormProps> = ({ onClose }) => {
           variant="contained"
           color="secondary"
           onClick={handlePasswordReset}
+          fullWidth
+          sx={{ mt: 2 }}
         >
           Reset Password
         </Button>
       )}
-      <Button variant="text" onClick={onClose}>
+      <Button variant="text" onClick={onClose} fullWidth sx={{ mt: 2 }}>
         Close
       </Button>
     </Box>

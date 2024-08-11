@@ -1,10 +1,31 @@
 .urlshortener-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 16px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.table-container {
+.short-url {
+  width: 100%;
+  text-align: center;
+}
+
+.qr-code {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.qr-code canvas {
+  margin-bottom: 16px;
+}
+
+.MuiTable-root {
   margin-top: 20px;
   width: 100%;
 }

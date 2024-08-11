@@ -1,25 +1,79 @@
+/* General styling for the main page container */
 .main-page-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  padding: 0 16px;
+  align-items: center;
+  height: 100vh;
+  padding: 16px;
+  position: relative;
 }
 
+/* Styling for the menu button */
+.menu-button {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+}
+
+/* General styling for the content container */
+.content-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+/* Styling for the URL shortener container */
 .urlshortener-container {
+  width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: transform 0.3s ease;
-  width: 100%;
+  margin-bottom: 20px;
 }
 
-.form-active {
-  transform: translateX(33%);
+/* Styling for the form container */
+.form-container {
+  width: 30%;
+  padding: 16px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-footer {
-  margin-top: auto;
+/* When the drawer is open, move the content to the right */
+.drawer-open .content-container {
+  transform: translateX(200px);
+}
+
+/* Styling for the Drawer */
+.MuiDrawer-paper {
+  width: 200px;
+}
+
+/* Styling for the List items in the Drawer */
+.MuiList-root {
+  padding: 0;
+}
+
+.MuiListItem-root {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+  cursor: pointer;
+}
+
+.MuiListItemText-root {
   text-align: center;
-  padding: 10px;
-  background-color: #f1f1f1;
+}
+
+/* Adjust the width of the URL shortener container when the form is active */
+.active .urlshortener-container {
+  width: 66.66%;
+}
+
+/* Center the URL shortener container when the form is not active */
+.urlshortener-container {
+  transition: all 0.3s ease;
 }

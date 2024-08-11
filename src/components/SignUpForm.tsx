@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography } from '@mui/material';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig'; // Adjust import as needed
+import { auth } from '../firebaseConfig';
 
 interface SignUpFormProps {
   onClose: () => void;
@@ -21,14 +21,26 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onClose }) => {
   };
 
   return (
-    <Box>
-      <Typography variant="h6">Sign Up</Typography>
+    <Box
+      sx={{
+        maxWidth: 400,
+        mx: 'auto',
+        p: 3,
+        bgcolor: 'background.paper',
+        borderRadius: 2,
+        boxShadow: 2,
+      }}
+    >
+      <Typography variant="h6" mb={2}>
+        Sign Up
+      </Typography>
       <TextField
         label="Email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         fullWidth
         margin="normal"
+        variant="outlined"
       />
       <TextField
         label="Password"
@@ -37,11 +49,18 @@ const SignUpForm: React.FC<SignUpFormProps> = ({ onClose }) => {
         onChange={(e) => setPassword(e.target.value)}
         fullWidth
         margin="normal"
+        variant="outlined"
       />
-      <Button variant="contained" color="primary" onClick={handleSignUp}>
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleSignUp}
+        fullWidth
+        sx={{ mt: 2 }}
+      >
         Sign Up
       </Button>
-      <Button variant="text" onClick={onClose}>
+      <Button variant="text" onClick={onClose} fullWidth sx={{ mt: 2 }}>
         Close
       </Button>
     </Box>

@@ -1,32 +1,60 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import MainPage from './components/MainPage';
-import {
-  CssBaseline,
-  AppBar,
-  Toolbar,
-  Typography,
-  Container,
-} from '@mui/material';
+import React, { useState } from 'react';
+import './App.css';
+import UrlShortener from './components/UrlShortener';
+import Signup from './components/Signup';
+import Login from './components/Login';
+import { Drawer, List, ListItem, IconButton, Typography } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
-const App: React.FC = () => {
+function App() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [activeForm, setActiveForm] = useState('');
+
+  const toggleDrawer = () => {
+    setDrawerOpen(!drawerOpen);
+    if (drawerOpen) {
+      setActiveForm('');
+    }
+  };
+
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
   return (
-    <React.Fragment>
-      <CssBaseline />
-      <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6">Scissor</Typography>
-        </Toolbar>
-      </AppBar>
-      <Container>
-        <Router>
-          <Routes>
-            <Route path="/" element={<MainPage />} />
-          </Routes>
-        </Router>
-      </Container>
-    </React.Fragment>
+    <div className={`App ${drawerOpen ? 'drawer-open' : ''}`}>
+      <div className="main-page-container">
+        <div className="header">
+          <IconButton onClick={toggleDrawer} className="menu-button">
+            {drawerOpen ? <CloseIcon /> : <MenuIcon />}
+          </IconButton>
+          <Typography variant="h4" className="app-name" onClick={handleRefresh}>
+            Scissor
+          </Typography>
+          <IconButton onClick={handleRefresh} className="refresh-button">
+            <RefreshIcon />
+          </IconButton>
+        </div>
+        <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer}>
+          <List>
+            <ListItem button onClick={() => setActiveForm('signup')}>
+              Signup
+            </ListItem>
+            <ListItem button onClick={() => setActiveForm('login')}>
+              Login
+            </ListItem>
+          </List>
+        </Drawer>
+        <div className={`content-container ${activeForm ? 'active' : ''}`}>
+          {activeForm === 'signup' && <Signup />}
+          {activeForm === 'login' && <Login />}
+          <UrlShortener />
+        </div>
+      </div>
+    </div>
   );
-};
+}
 
 export default App;
